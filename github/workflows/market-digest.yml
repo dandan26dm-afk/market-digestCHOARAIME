@@ -1,0 +1,55 @@
+name: Market Digest
+
+# ההפעלה היומית מגיעה מ-cron-job.org בשעה מדויקת (GitHub schedule מתעכב לפעמים בשעות).
+# אפשר גם להריץ ידנית מלשונית Actions.
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "להריץ גם מחוץ לשעות (לבדיקה)"
+        type: boolean
+        default: false
+      send:
+        description: "לשלוח לדיסקורד?"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: market-digest
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Build image & send to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          FORCE: ${{ inputs.force }}
+          NO_SEND: ${{ !inputs.send }}
+        run: python digest.py
+
+      - name: Save image as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: market-digest
+          path: out/*.png
+          if-no-files-found: ignore
+          retention-days: 14
