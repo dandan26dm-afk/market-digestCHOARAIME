@@ -1,0 +1,55 @@
+name: Market Digest
+
+on:
+  schedule:
+ 
+    - cron: "30 10 * * 1-6"   # שעון קיץ (EDT)
+    - cron: "30 11 * * 1-6"   # שעון חורף (EST)
+    # הסקריפט בודק איזה מהשניים מתאים היום ומדלג על השני
+  workflow_dispatch:           # הרצה ידנית מלשונית Actions
+    inputs:
+      send:
+        description: "לשלוח לדיסקורד?"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: market-digest
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Build image & send to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SCHEDULE: ${{ github.event.schedule }}
+          FORCE: ${{ github.event_name == 'workflow_dispatch' }}
+          NO_SEND: ${{ github.event_name == 'workflow_dispatch' && !inputs.send }}
+        run: python digest.py
+
+      - name: Save image as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: market-digest
+          path: out/*.png
+          if-no-files-found: ignore
+          retention-days: 14
