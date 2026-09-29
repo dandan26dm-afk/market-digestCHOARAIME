@@ -1,0 +1,6 @@
+yfinance>=0.2.54
+pandas
+Jinja2
+PyYAML
+requests
+playwright
