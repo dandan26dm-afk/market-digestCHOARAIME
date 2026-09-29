@@ -34,11 +34,11 @@ GENERAL = "כללי"
 # המשבצות בחלק התחתון (שתי שורות של 4)
 MARKET_TILES = [
     {"symbol": "^GSPC", "label": "S&P 500", "sub": "", "kind": "index"},
-    {"symbol": "^IXIC", "label": "NASDAQ", "sub": "", "kind": "index"},
+    {"symbol": "^IXIC", "label": "QQQ", "sub": "", "kind": "index"},
     {"symbol": "^VIX", "label": "VIX", "sub": "", "kind": "vix"},
     {"symbol": "^RUT", "label": "RUSSELL", "sub": "", "kind": "index"},
     {"symbol": "RSP", "label": "RSP", "sub": "שוויוני", "kind": "price"},
-    {"symbol": "BTC-USD", "label": "BITCOIN", "sub": "", "kind": "crypto"},
+    {"symbol": "BTC-USD", "label": "BTCUSD", "sub": "", "kind": "crypto"},
     {"symbol": "CL=F", "label": "USOIL", "sub": "", "kind": "price"},
     {"symbol": "^TNX", "label": "US10Y", "sub": "", "kind": "yield"},
 ]
