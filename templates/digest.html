@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=block" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #3ad26a; --red: #ff4b4b; --yellow: #ffd21f;
+    --text: #f3f6f5; --muted: #8fa3a0; --line: rgba(255,255,255,.07);
+  }
+  /* צבע רקע לפי מצב ה-S&P 500 */
+  .mood-strong-up   { --bg1:#0b3322; --bg2:#06190f; --panel:rgba(0,0,0,.22); --accent:#3ad26a; }
+  .mood-up          { --bg1:#113130; --bg2:#0a1e1d; --panel:rgba(0,0,0,.20); --accent:#5fd4a0; }
+  .mood-flat        { --bg1:#18222c; --bg2:#0e151c; --panel:rgba(0,0,0,.22); --accent:#9fb3c8; }
+  .mood-down        { --bg1:#301a1c; --bg2:#1a0d0f; --panel:rgba(0,0,0,.22); --accent:#ff7a6b; }
+  .mood-strong-down { --bg1:#40121a; --bg2:#1f070b; --panel:rgba(0,0,0,.26); --accent:#ff4b4b; }
+
+  body { background: #000; font-family: "Heebo", "FreeSans", "DejaVu Sans", sans-serif; }
+  #card {
+    width: 1080px; min-height: 1350px; padding: 36px 28px 0;
+    background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+    color: var(--text); display: flex; flex-direction: column; gap: 20px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tk { unicode-bidi: isolate; direction: ltr; }
+
+
+  .kicker { display: flex; justify-content: space-between; padding: 0 12px; margin-top: 0;
+            color: var(--muted); font-size: 17px; font-weight: 700; }
+  .kicker .breadth b { color: var(--text); }
+  h1 { font-size: 50px; font-weight: 800; line-height: 1.12; padding: 0 12px; margin-top: -10px; letter-spacing: -.5px; }
+  h1 .hl { color: var(--hl); }
+  .tone-up { --hl: var(--green); } .tone-down { --hl: var(--red); } .tone-flat { --hl: var(--accent); }
+
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; }
+  .story { padding: 26px 32px; font-size: 29px; line-height: 1.6; font-weight: 400; }
+  .story .tk { font-weight: 500; }
+
+  .lists { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .list { padding: 20px 20px 8px; }
+  .list h2 { font-size: 25px; font-weight: 800; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .list h2::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--dot); }
+  .list.gain { --dot: var(--green); } .list.lose { --dot: var(--red); }
+  .row { display: flex; justify-content: space-between; align-items: center; height: 64px; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row .name { display: flex; align-items: baseline; gap: 12px; }
+  .row .sym { font-size: 32px; font-weight: 800; direction: ltr; }
+  .row .grp { font-size: 16px; color: var(--muted); font-weight: 500; }
+  .row .chg { font-size: 32px; font-weight: 800; direction: ltr; }
+
+  .up { color: var(--green); } .down { color: var(--red); } .flat { color: var(--muted); }
+
+  .alert { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px;
+           padding: 18px 26px; font-size: 24px; font-weight: 700; border-radius: 16px; }
+  .alert .ttl { font-size: 32px; font-weight: 800; direction: ltr; }
+  .alert.danger .line.first { font-size: 30px; font-weight: 800; }
+  .alert.warn   { background: rgba(255,210,31,.08); border: 1px solid rgba(255,210,31,.28); color: var(--yellow); }
+  .alert.danger { background: rgba(255,75,75,.10);  border: 1px solid rgba(255,75,75,.35);  color: #ff8080; }
+  .alert.calm   { background: rgba(58,210,106,.07); border: 1px solid rgba(58,210,106,.25); color: #7fe0a0; }
+
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; direction: ltr; }
+  .tile { padding: 18px 10px 16px; text-align: center; border-radius: 18px; }
+  .tile .lbl { font-size: 22px; font-weight: 800; letter-spacing: .3px; }
+  .tile .sub { font-size: 16px; color: var(--muted); font-weight: 500; }
+  .tile .val { font-size: 40px; font-weight: 800; margin-top: 6px; letter-spacing: -.5px; }
+  .tile .val.warn { color: var(--yellow); } .tile .val.danger { color: var(--red); }
+  .tile .chg { font-size: 24px; font-weight: 800; margin-top: 4px; }
+
+  footer { margin: auto -28px 0; padding: 22px 40px; border-top: 1px solid var(--line);
+           display: flex; justify-content: flex-end; align-items: center; }
+  footer .src.demo { color: var(--yellow); opacity: 1; font-size: 18px; direction: rtl; }
+  footer .src { color: var(--muted); font-size: 15px; font-weight: 700; opacity: .7; direction: ltr; }
+</style>
+</head>
+<body>
+<div id="card" class="mood-{{ mood }}">
+
+
+  <div class="kicker">
+    <span>הסיפור של היום</span>
+    <span class="breadth">עולות ברשימה: <b class="tk">{{ breadth }}</b></span>
+  </div>
+  <h1 class="tone-{{ tone }}">{{ headline }}</h1>
+
+  <div class="panel story">{{ story }}</div>
+
+  <div class="lists">
+    {% for key, cls in [("gainers", "gain"), ("losers", "lose")] %}
+    {% set box = gainers if key == "gainers" else losers %}
+    <div class="panel list {{ cls }}">
+      <h2>{{ box.title }}</h2>
+      {% for r in box.rows %}
+      <div class="row">
+        <div class="name"><span class="sym">{{ r.symbol }}</span>{% if r.group %}<span class="grp">{{ r.group }}</span>{% endif %}</div>
+        <div class="chg {{ r.cls }}">{{ r.change }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if alert %}
+  <div class="alert {{ alert.level }}">
+    {% if alert.title %}<div class="ttl">{{ alert.title }}</div>{% endif %}
+    {% for line in alert.lines %}<div class="line{% if loop.first %} first{% endif %}">{{ line }}</div>{% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="tiles">
+    {% for t in tiles %}
+    <div class="panel tile">
+      <div class="lbl">{{ t.label }}{% if t.sub %} <span class="sub" dir="rtl">{{ t.sub }}</span>{% endif %}</div>
+      <div class="val {{ t.value_cls }}">{{ t.value }}</div>
+      <div class="chg {{ t.cls }}">{{ t.change }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <footer>
+    {% if demo %}<div class="src demo">נתוני דמו, לא אמיתיים</div>{% else %}<div class="src">DATA: YAHOO FINANCE</div>{% endif %}
+  </footer>
+</div>
+</body>
+</html>
