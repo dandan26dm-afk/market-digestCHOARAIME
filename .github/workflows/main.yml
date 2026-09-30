@@ -3,8 +3,8 @@ name: Market Digest
 on:
   schedule:
  
-    - cron: "30 10 * * 1-6"   # שעון קיץ (EDT)
-    - cron: "30 11 * * 1-6"   # שעון חורף (EST)
+    - cron: "30 5 * * 1-6"   # שעון קיץ (EDT)
+    - cron: "30 6 * * 1-6"   # שעון חורף (EST)
     # הסקריפט בודק איזה מהשניים מתאים היום ומדלג על השני
   workflow_dispatch:           # הרצה ידנית מלשונית Actions
     inputs:
